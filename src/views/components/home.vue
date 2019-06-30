@@ -31,13 +31,13 @@ export default {
                 {
                     title: 'Ver Alunos',
                     description: 'Ver todos os alunos cadastrados',
-                    to: '/alunos',
+                    to: '/students',
                     color: 'blue-grey',
                 },
                 {
                     title: 'Ver Alunos',
                     description: 'Ver todos os alunos cadastrados',
-                    to: '/alunos',
+                    to: '/students',
                     color: 'blue-grey',
                 }
             ]
