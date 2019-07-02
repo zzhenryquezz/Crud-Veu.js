@@ -114,7 +114,10 @@ export default {
             showDeleteForm: false,
             deleteStudentId: null
         }
-    },    
+    },
+    created(){
+      this.$store.dispatch('students/setAll');      
+    },
     watch:{
       // when dialog close go back the variables to default
       showForm(newValue: boolean): void{

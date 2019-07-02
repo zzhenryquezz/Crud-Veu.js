@@ -74,7 +74,7 @@ export default {
             name: this.name
             };
 
-            this.$store.commit('students/edit', args);
+            this.$store.dispatch('students/edit', args);
             this.$refs.form.reset();            
             this.$emit('closeForm');
         },
@@ -84,7 +84,7 @@ export default {
             name: this.name
             };
 
-            this.$store.commit('students/addNew', student);
+            this.$store.dispatch('students/addNew', student);
             this.$refs.form.reset();
             this.$emit('closeForm');
         },        

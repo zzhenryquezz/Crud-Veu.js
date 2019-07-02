@@ -7,25 +7,52 @@
     namespaced: true,
     state:{
         // global var with all students
-        all: [
-            {
-                id: 0,
-                name: 'Estudante 1',
-                bestAverage: 150.00,
-                lowerAverage: 60.00
-            },
-            {
-                id: 1,
-                name: 'Estudante 2', 
-                bestAverage: 150.00,
-                lowerAverage: 60.00
-            }
-        ],
-        lastId: 2 // last student id used by the system
+        all: [],
+        lastId: 0 // last student id used by the system
     },
-    mutations:{        
+    mutations:{
+        changeAllStudents(state: any, newData: any = []){
+            let lastId = localStorage.getItem('students_lastId');
+            if(lastId !== null && lastId !== ''){
+                state.lastId = Number(lastId);
+            }
+            state.all = newData;
+        },        
+        addNewStudent(state: any, newStudent: any){
+            state.all.push(newStudent);
+        },
+        editStudent(state: any, studentData: any){
+            
+            state.all = state.all.map( (student: any) => {
+                
+                // search for the student with same id in the args
+                if(student['id'] == studentData['id']){
+                    student.name = studentData.name;
+                }
+                
+                return student;
+            });
+        },
+        incrementLastId(state: any){
+            state.lastId++;
+        }  
+    },
+    actions:{
+        // set the global variable of students
+        setAll({ commit, getters }: any){
+            let students: any = localStorage.getItem('students_all');            
+            if(students !== '' && students !== null){
+                students = JSON.parse(students);
+            }else{
+                students = [];
+            }            
+            commit('changeAllStudents',students);
+
+            // update data in localStorange
+            getters.saveDataInLocalStorange();        
+        },
         // add new student function
-        addNew(state: any, studentData: any): void{
+        addNew({commit, state, getters}: any, studentData: any): void{
                     
             let id = state.lastId;
             studentData['id'] = id;
@@ -35,22 +62,21 @@
             studentData['lowerAverage'] = '-';
 
             // add new item in global array of students
-            state.all.push(studentData);
+            commit('addNewStudent', studentData);
 
             // update the last id of itens
-            state.lastId++;
+            commit('incrementLastId');
+
+            // update data in localStorange
+            getters.saveDataInLocalStorange();        
         },
         // edit existent student function
-        edit(state: any , args: any): void{
-            state.all = state.all.map( (student: any) => {
-                
-                // search for the student with same id in the args
-                if(student['id'] == args['id']){
-                    student.name = args.name;
-                }
-                
-                return student;
-            });
+        edit({ commit, getters }: any , studentData: any): void{
+
+            commit('editStudent', studentData);
+            
+            // update data in localStorange
+            getters.saveDataInLocalStorange();      
         },
         // delete student using id
         delete(state: any, id: number): void {
@@ -77,6 +103,16 @@
             
             return student;
             
+        },
+        saveDataInLocalStorange:(state: any) => () => {
+
+            let studentsJson = JSON.stringify(state.all);
+            let lastId = state.lastId.toString();
+            
+
+            // saving global variable students in localStorange            
+            localStorage.setItem('students_all', studentsJson);
+            localStorage.setItem('students_lastId', lastId);
         }
     }
 
