@@ -13,24 +13,11 @@
               />
               
       </v-dialog>
-     
-        <v-dialog v-model="showDeleteForm" max-width="290">
-        <v-card>
-          <v-card-title class="text-md-center">
-            <v-spacer></v-spacer>
-              <v-icon  color="red" class="py-4" x-large>warning</v-icon>
-            <v-spacer></v-spacer>
-
-            Tem certeza que Deseja Exluir o Estudante?
-          </v-card-title>
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn color="error" @click="handleDeleteStudent">Deletar</v-btn>
-            <v-btn color="success" flat @click="showDeleteForm = false">Cancelar</v-btn>
-            <v-spacer></v-spacer>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
+     <AlertDialog
+        message="Tem certeza que Deseja Exluir o Estudante?"
+        @positive="handleDeleteStudent"
+        v-model="showDeleteForm" 
+      />     
 
     </v-toolbar>
     <v-data-table
@@ -142,9 +129,14 @@ export default {
         this.showForm = true;
       },
       
+      // show the form and set the id to delete the student
+      deleteStudent(id: number): void{
+        this.showDeleteForm = true;
+        this.deleteStudentId = id;
+      },
       // dispatch the envent to delete the student
       handleDeleteStudent(): void{
-        this.$store.commit('students/delete', this.deleteStudentId);
+        this.$store.dispatch('students/delete', this.deleteStudentId);
         this.showDeleteForm = false;
         this.notification = {           
             show: true,
@@ -153,11 +145,6 @@ export default {
             
         }
       },
-      // show the form and set the id to delete the student
-      deleteStudent(id: number): void{
-        this.showDeleteForm = true;
-        this.deleteStudentId = id;
-      }
     }
 }
 </script>

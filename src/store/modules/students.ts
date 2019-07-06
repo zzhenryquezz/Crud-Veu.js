@@ -33,6 +33,14 @@
                 return student;
             });
         },
+        deleteStudent(state: any, id: number){
+            // remove the student object of global var using filter() function
+            state.all = state.all.filter( (student: any) => {
+                if(student.id !== id){
+                    return student;
+                }
+            })
+        },
         incrementLastId(state: any){
             state.lastId++;
         }  
@@ -79,13 +87,10 @@
             getters.saveDataInLocalStorange();      
         },
         // delete student using id
-        delete(state: any, id: number): void {
-            // remove the student object of global var using filter() function
-            state.all = state.all.filter( (student: any) => {
-                if(student.id !== id){
-                    return student;
-                }
-            })
+        delete({ commit, getters }: any, id: number): void {
+            commit('deleteStudent', id);
+            // update data in localStorange
+            getters.saveDataInLocalStorange();        
         }
     },
     getters:{

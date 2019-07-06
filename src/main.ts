@@ -7,6 +7,8 @@ import store from './store';
 
 Vue.config.productionTip = false;
 
+Vue.component('AlertDialog', require('./components/helper').AlertDialog);
+
 new Vue({
   router,
   store,

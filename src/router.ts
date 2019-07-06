@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import { HomePage, StudentsPage } from './views';
+import { HomePage, StudentsPage, SubjectsPage } from './views';
 
 Vue.use(Router);
 
@@ -15,8 +15,19 @@ export default new Router({
     },   
     {
       path: '/students',
-      name: 'Alunos',
+      name: 'students',
+      meta:{
+        title: 'Alunos'
+      },
       component: StudentsPage,
+    },   
+    {
+      path: '/subjects',
+      name: 'subjects',
+      meta:{
+        title: 'Materias'
+      },
+      component: SubjectsPage,
     },   
   ],
 });

@@ -40,6 +40,15 @@
             <v-list-tile-title>Alunos</v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>        
+       
+        <v-list-tile to="/subjects">
+          <v-list-tile-action>
+            <v-icon>account_balance</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-content>
+            <v-list-tile-title>Materias</v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>        
 
       </v-list>
     </v-navigation-drawer>
