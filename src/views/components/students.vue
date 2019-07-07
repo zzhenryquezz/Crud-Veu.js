@@ -28,25 +28,26 @@
       rows-per-page-text="Quantidade de items a Mostrar"
     >
       <template v-slot:items="props">
-        <td>{{ props.item.name }}</td>        
-        <td>{{ props.item.bestAverage }}</td>        
-        <td>{{ props.item.lowerAverage }}</td> 
-        
-        <td class="justify-center layout px-0">
-          <v-icon
-            small            
-            class="mr-2"
-            @click="editStudent(props.item)"
-          >
-            edit
-          </v-icon>
-          <v-icon
-            small
-            @click="deleteStudent(props.item.id)"
-          >
-            delete
-          </v-icon>
-        </td>      
+        <tr>
+
+          <td @click="goToStudentPage(props.item)">{{ props.item.name }}</td>                  
+          
+          <td class="justify-end layout ">
+            <v-icon
+              small            
+              class="mr-2"
+              @click="editStudent(props.item)"
+            >
+              edit
+            </v-icon>
+            <v-icon
+              small
+              @click="deleteStudent(props.item.id)"
+            >
+              delete
+            </v-icon>
+          </td>      
+        </tr>
                   
       </template>
       <template v-slot:no-data>
@@ -86,10 +87,8 @@ export default {
     data(): object {
         return {
             headers: [            
-                { text: 'Nome', value: 'name' },      
-                { text: 'Maior Média', value: 'bestAverage' },      
-                { text: 'Menor Média', value: 'lowerAverage' },      
-                { text: 'Opções', value: 'name', sortable: false },      
+                { text: 'Nome', value: 'name' },                      
+                { text: 'Opções', value: 'name', align: 'right', sortable: false },      
             ],
             notification:{
               show: false,
@@ -123,6 +122,14 @@ export default {
         }
     },
     methods:{
+      // send to single page students
+      goToStudentPage(student: any){
+        let params = {
+          id: student.id,
+          name: student.name
+        };
+        this.$router.push({name: 'single_students', params})
+      },
       // set the student edited variable and show the form to edit it
       editStudent(student: any): void{
         this.editedItem = student;

@@ -6,7 +6,8 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   modules:{
     students: require('./modules/students').default,
-    subjects: require('./modules/subjects').default
+    subjects: require('./modules/subjects').default,
+    tests: require('./modules/tests').default
   },
   state: {
     // value to show the sidebar

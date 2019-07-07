@@ -5,10 +5,10 @@
                 <v-card>
                     <v-card-title>
                                                 
-                        <v-btn 
-                            color="info"
-                            @click="showSubjectsForm = true">
-                            Adicionar Materia
+                        <v-btn
+                            @click="showTestsForm = true"
+                            color="info">
+                            Adicionar Prova
                         </v-btn>
 
                         <v-spacer></v-spacer>
@@ -16,7 +16,7 @@
                         <v-text-field
                             v-model="search"
                             append-icon="search"
-                            label="Buscar Materia"
+                            label="Buscar Prova"
                             single-line
                             hide-details
                         />
@@ -24,25 +24,26 @@
                     </v-card-title>
                 <v-data-table
                     :headers="headers"
-                    :items="allSubjects"
+                    :items="allTests"
                     :search="search"                    
                     :rows-per-page-items="[10,15,20,{ text:'Todos', value:-1}]"
                     rows-per-page-text="Quantidade de items a Mostrar"
                 >
                     <template v-slot:items="props">
-                        <td>{{ props.item.name }}</td>
-                        <td>{{ getNumberOfTests(props.item) }}</td>
-                        <td class="justify-center layout px-0">
+                        <td>{{ props.item.name }}</td>                        
+                        <td>{{ props.item.description }}</td>                        
+                        <td>{{ getSubjectName(props.item.fk_subject) }}</td>                        
+                        <td>
                             <v-icon
                                 small            
                                 class="mr-2"
-                                @click="handleEditSubject(props.item)"
+                                @click="handleEditTest(props.item)"
                             >
                                 edit
                             </v-icon>
                             <v-icon
                                 small
-                                @click="deleteSubject(props.item.id)"
+                                @click="deleteTest(props.item.id)"
                             >
                                 delete
                             </v-icon>
@@ -50,25 +51,25 @@
                     </template>
                     <template v-slot:no-data>
                         <v-alert
-                        :value="true"
-                        type="error"
+                            :value="true"
+                            type="error"
                         >
-                        Nenhum Matéria Encontrada
+                        Nenhuma Prova Encontrada
                         </v-alert>
-                        <v-btn color="primary" >Reset</v-btn>
+                        <v-btn color="primary" >Recarregar</v-btn>
                     </template>
                 </v-data-table>
             </v-card>
-            <v-dialog width="300" v-model="showSubjectsForm">
-                <SubjectsForm
-                    :editedSubject="editedSubject"
-                    @close="showSubjectsForm = false" 
+            <v-dialog width="500" v-model="showTestsForm">
+                <TestsForm
+                    :editedTest="editedTest"
+                    @close="showTestsForm = false"
                 />
             </v-dialog>
+            
             <AlertDialog
-                message="Tem certeza que Deseja Exluir A Matéria?"
-                subText="Isso irá exluir também todas as Provas e Notas de Alunos Relacionados"
-                @positive="handleDeleteSubject"
+                message="Tem certeza que Deseja Exluir A Prova?"
+                @positive="handleDeleteTest"
                 v-model="showDeleteForm" 
             />
 
@@ -79,57 +80,59 @@
 
 <script lang="ts">
 export default {
-    name: 'SubjectsPage',
+    name: 'TestsPage',
     data(): object{
         return {
             headers:[
                 { text: 'Nome', value: 'name' },
-                { text: 'Numero Provas Criadas', value: 'tests' },                
+                { text: 'Descrição', value: 'description' }, 
+                { text: 'Materia', value: 'subject' },                                
                 { text: 'Options', value: 'name', sortable: false },
             ],
             search: '',
-            editedSubject: null,
-            showSubjectsForm: false,
+            editedTest: null,
+            showTestsForm: false,
             showDeleteForm: false,
-            deleteSubjectId: null
+            deleteTestId: null
         }        
     },
     components:{
-        SubjectsForm: require('./../../components/subjects').SubjectsForm
+        TestsForm: require('./../../components/tests').TestsForm
     },
     computed:{
-        allSubjects(): any{
-            return this.$store.state.subjects.all;
+        allTests(): any{
+            return this.$store.state.tests.all;
         },
     },
     created(){
-        this.$store.dispatch('subjects/setAll');
+        this.$store.dispatch('tests/setAll');
     },
     watch:{
-        showSubjectsForm(value: boolean): void{
+        showTestsForm(value: boolean): void{
             if(!value){
-                this.editedSubject = null;
+                this.editedTest = null;
             }
         }
     },
     methods:{
-        getNumberOfTests(subject){
-            return 0;
+        getSubjectName(subjectId){
+            let subject = this.$store.getters['subjects/getById'](subjectId);
+            return subject.name;
         },
         // set the edited item an show the form
-        handleEditSubject(subject: object): void{
-            
-            this.editedSubject = subject;
-            this.showSubjectsForm = true;
+        handleEditTest(test: object): void{
+            this.editedTest = test;
+            this.showTestsForm = true;
+                        
         },
-        // prepare subject to be deleted
-        deleteSubject(id: number): void{            
-            this.deleteSubjectId = id;
+        // prepare test to be deleted
+        deleteTest(id: number): void{            
+            this.deleteTestId = id;
             this.showDeleteForm = true;
         },
         // excute the delete acion in store
-        handleDeleteSubject():any{                        
-            this.$store.dispatch('subjects/delete', this.deleteSubjectId);
+        handleDeleteTest():any{                        
+            this.$store.dispatch('tests/delete', this.deleteTestId);
         } 
     }
 }

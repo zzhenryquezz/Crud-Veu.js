@@ -32,16 +32,16 @@
     </v-form>
 </template>
 
-<script lang="ts">
+<script>
 export default {
-    data(): object {
+    data() {
         return {            
             valid: false,
             name: '',            
         }
     },
     watch:{
-        editedItem(value: any){
+        editedItem(value){
             this.$refs.form.reset();
             if(value !== null){
                 // remove watcher to prevent bugs in props
@@ -58,7 +58,7 @@ export default {
         }
     },
     methods:{
-        hadleSubmitForm(): void{
+        hadleSubmitForm(){
             if(!this.valid){
                 return;
             }
@@ -70,18 +70,18 @@ export default {
         },
         updateStudent(){            
             let args = {
-            id: this.editedItem.id,
-            name: this.name
+                id: this.editedItem.id,
+                name: this.name
             };
 
             this.$store.dispatch('students/edit', args);
             this.$refs.form.reset();            
             this.$emit('closeForm');
         },
-        addNewStudent(): void{
+        addNewStudent(){
         
             let student = {          
-            name: this.name
+                name: this.name
             };
 
             this.$store.dispatch('students/addNew', student);

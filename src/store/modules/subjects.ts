@@ -30,8 +30,7 @@ export default {
         // add new subject to the global variable
         addNew(state: any, subjectData: any){
             // add id and default data to subject
-            subjectData['id'] = state.lastId;
-            subjectData['tests'] = [];
+            subjectData['id'] = state.lastId;            
             state.all.push(subjectData);
             state.lastId++;
         },
@@ -84,13 +83,38 @@ export default {
             getters.saveDataInLocalStorange();      
         },
         // delete subject using id
-        delete({ commit, getters }: any, id: number): void {
+        delete({ commit, getters, rootState, dispatch }: any, id: number): void {
+            let subjectTests = rootState.tests.all.filter((test: any) => {
+                if(test.fk_subject == id){                 
+                    return test;
+                }
+            })
+            subjectTests.forEach((test: any) => {                
+                dispatch('tests/delete', test.id, {root: true});           
+            });
+            
             commit('deleteSubject', id);
+
             // update data in localStorange
             getters.saveDataInLocalStorange();        
         }
     },
     getters:{
+        // get subject by id
+        getById:(state: any) => (id: number) => {
+            let subject = null;
+            
+            // search item that have the same id
+            state.all.map((item: any) => {
+                if(item.id == id){
+                    // store the item in a variable 
+                    subject = item;
+                }
+            });
+            
+            return subject;
+            
+        },
         saveDataInLocalStorange:(state: any) => (): void => {
             let subjectsJson = JSON.stringify(state.all);
             let lastId = state.lastId.toString();            

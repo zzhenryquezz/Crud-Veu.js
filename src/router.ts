@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import { HomePage, StudentsPage, SubjectsPage } from './views';
+import { HomePage, StudentsPage, SingleStudentPage, SubjectsPage, TestsPage } from './views';
 
 Vue.use(Router);
 
@@ -19,7 +19,15 @@ export default new Router({
       meta:{
         title: 'Alunos'
       },
-      component: StudentsPage,
+      component: StudentsPage,      
+    },
+    {
+      path: '/student/:name/:id',
+      name: 'single_students',
+      component: SingleStudentPage,
+      meta:{
+        title: 'Aluno'
+      }
     },   
     {
       path: '/subjects',
@@ -28,6 +36,14 @@ export default new Router({
         title: 'Materias'
       },
       component: SubjectsPage,
+    },   
+    {
+      path: '/tests',
+      name: 'tests',
+      meta:{
+        title: 'Provas'
+      },
+      component: TestsPage,
     },   
   ],
 });

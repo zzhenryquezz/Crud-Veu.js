@@ -27,7 +27,7 @@
                 
                 // search for the student with same id in the args
                 if(student['id'] == studentData['id']){
-                    student.name = studentData.name;
+                    student = studentData;
                 }
                 
                 return student;
@@ -66,8 +66,7 @@
             studentData['id'] = id;
             
             // add empty default values to the student
-            studentData['bestAverage'] = '-';
-            studentData['lowerAverage'] = '-';
+            studentData['tests'] = [];            
 
             // add new item in global array of students
             commit('addNewStudent', studentData);
@@ -91,11 +90,22 @@
             commit('deleteStudent', id);
             // update data in localStorange
             getters.saveDataInLocalStorange();        
+        },
+        // detete all student tests with test id
+        deteteTests({commit, dispatch}:any, args: any){
+            let newStudent = args.student;
+            newStudent['tests'] = newStudent['tests'].filter((test: any) => {                
+                if(test.fk_test !== args.testId){
+                    return test;
+                }
+            });
+                        
+            dispatch('edit', newStudent);
         }
     },
     getters:{
         // get student by id
-        getById:(state: object) => (id: number) => {
+        getById:(state: any) => (id: number) => {
             let student = null;
             
             // search item that have the same id

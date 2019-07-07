@@ -25,6 +25,14 @@
     components:{
       Sidebar: require('./components/sidebar').Sidebar, // sidebar to show in all pages
       TopNavbar: require('./components/top-navbar').TopNavbar, // top navbar to show in all pages
-    },    
+    },
+    created(){
+      // set the all students in store
+      this.$store.dispatch('students/setAll');
+      // set the all subjects in store
+      this.$store.dispatch('subjects/setAll');
+      // set the all tests in store
+      this.$store.dispatch('tests/setAll');
+    }
   }
 </script>

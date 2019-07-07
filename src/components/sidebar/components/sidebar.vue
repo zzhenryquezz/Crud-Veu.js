@@ -49,6 +49,15 @@
             <v-list-tile-title>Materias</v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>        
+        
+        <v-list-tile to="/tests">
+          <v-list-tile-action>
+            <v-icon>assignment</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-content>
+            <v-list-tile-title>Provas</v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>        
 
       </v-list>
     </v-navigation-drawer>
