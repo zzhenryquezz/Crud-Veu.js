@@ -43,7 +43,7 @@
                             </v-icon>
                             <v-icon
                                 small
-                                @click="deleteTest(props.item.id)"
+                                @click="handleDeleteTest(props.item.id)"
                             >
                                 delete
                             </v-icon>
@@ -52,7 +52,7 @@
                     <template v-slot:no-data>
                         <v-alert
                             :value="true"
-                            type="error"
+                            type="warning"
                         >
                         Nenhuma Prova Encontrada
                         </v-alert>
@@ -69,7 +69,7 @@
             
             <AlertDialog
                 message="Tem certeza que Deseja Exluir A Prova?"
-                @positive="handleDeleteTest"
+                @positive="deleteTest"
                 v-model="showDeleteForm" 
             />
 
@@ -78,15 +78,15 @@
     </v-container>
 </template>
 
-<script lang="ts">
+<script>
 export default {
     name: 'TestsPage',
-    data(): object{
+    data(){
         return {
             headers:[
                 { text: 'Nome', value: 'name' },
                 { text: 'Descrição', value: 'description' }, 
-                { text: 'Materia', value: 'subject' },                                
+                { text: 'Materia', value: 'subject', sortable: false },                                
                 { text: 'Options', value: 'name', sortable: false },
             ],
             search: '',
@@ -100,38 +100,38 @@ export default {
         TestsForm: require('./../../components/tests').TestsForm
     },
     computed:{
-        allTests(): any{
+        // get all tests in vuex store
+        allTests(){
             return this.$store.state.tests.all;
         },
     },
-    created(){
-        this.$store.dispatch('tests/setAll');
-    },
     watch:{
-        showTestsForm(value: boolean): void{
+        // Objserve the Value to set the item to be edited
+        showTestsForm(value){
             if(!value){
                 this.editedTest = null;
             }
         }
     },
     methods:{
+        // get subjet name using the id
         getSubjectName(subjectId){
             let subject = this.$store.getters['subjects/getById'](subjectId);
             return subject.name;
         },
-        // set the edited item an show the form
-        handleEditTest(test: object): void{
+        // function to set the item to be edited an show the form
+        handleEditTest(test){
             this.editedTest = test;
             this.showTestsForm = true;
                         
         },
-        // prepare test to be deleted
-        deleteTest(id: number): void{            
+        // function to prepare test to be deleted and show the confim form
+        handleDeleteTest(id){            
             this.deleteTestId = id;
             this.showDeleteForm = true;
         },
-        // excute the delete acion in store
-        handleDeleteTest():any{                        
+        // excute the delete acion in store to delete the test
+        deleteTest(){                                    
             this.$store.dispatch('tests/delete', this.deleteTestId);
         } 
     }

@@ -14,7 +14,7 @@ export default new Vuex.Store({
     toggleSidebar: true,
     // global materai desing colors
     colors: {
-      primary:'green accent-4'
+      primary:'indigo'
     }
     
   },

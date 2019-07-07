@@ -9,13 +9,13 @@
                     label="Nome da Máteria"
                     :rules="[ v => v && !! v || 'Campo Obrigatorio']"
                     v-model="subject['name']" />
-                <v-btn color="success" type="submit">{{button_text}}</v-btn>
+                <v-btn color="success" type="submit">{{ button_text }}</v-btn>
             </v-card-title>
         </v-card>
     </v-form>
 </template>
 
-<script lang="ts">
+<script>
 export default {
     data(){
         return {
@@ -28,7 +28,8 @@ export default {
     props:{
         editedSubject:{
             type: Object,
-            required: false
+            required: false,
+            default: null
         }
     },
     computed:{
@@ -44,13 +45,15 @@ export default {
         editedSubject(value){
             if(value == null){
                 this.subject.name = '';
-            }else{
+                this.$refs.form.reset()
+            }else{                
                 this.subject.name = value.name;
             }
+            
         }
     },
     methods:{
-        validate(): any{
+        validate(){
             if (this.$refs.form.validate()) {
                 this.snackbar = true;
                 return true;                
@@ -58,7 +61,7 @@ export default {
             return false
         },
         // method to create a new subject
-        handleSubmitForm(): void{
+        handleSubmitForm(){
             // check if data is valid
             if(!this.validate()) return
 
@@ -73,20 +76,20 @@ export default {
             this.$refs.form.reset()
                         
         },
-        createNewSubject(): void{
-            // remove watcher of object
+        createNewSubject(){
+            // remove Observer of object
             let subject = {
                 name: JSON.parse(JSON.stringify(this.subject.name))
             }
             
             this.$store.dispatch('subjects/add', subject);                        
         },
-        updateSubject(): void{
+        updateSubject(){
             let subject = {
                 id: this.editedSubject['id'],
                 name: this.subject.name
             }
-            console.log(subject)
+            
             this.$store.dispatch('subjects/edit', subject);
         }
     }

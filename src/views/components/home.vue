@@ -15,7 +15,7 @@
                     </div>
                     </v-card-title>
                     <v-card-actions>
-                    <v-btn :to="card.to" flat dark>Listen now</v-btn>
+                    <v-btn :to="card.to" flat dark>Ir a Pagina</v-btn>
                     </v-card-actions>
                 </v-card>
             </v-flex>
@@ -32,13 +32,19 @@ export default {
                     title: 'Ver Alunos',
                     description: 'Ver todos os alunos cadastrados',
                     to: '/students',
-                    color: 'blue-grey',
+                    color: 'green',
                 },
                 {
-                    title: 'Ver Alunos',
-                    description: 'Ver todos os alunos cadastrados',
-                    to: '/students',
-                    color: 'blue-grey',
+                    title: 'Ver Materias',
+                    description: 'Ver todas as Matérias cadastrados',
+                    to: '/subjects',
+                    color: 'blue',
+                },
+                {
+                    title: 'Ver Provas',
+                    description: 'Ver todas os Provas cadastradas',
+                    to: '/tests',
+                    color: 'purple',
                 }
             ]
         }

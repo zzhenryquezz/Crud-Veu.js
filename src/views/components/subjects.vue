@@ -42,7 +42,7 @@
                             </v-icon>
                             <v-icon
                                 small
-                                @click="deleteSubject(props.item.id)"
+                                @click="handleDeleteSubject(props.item.id)"
                             >
                                 delete
                             </v-icon>
@@ -51,7 +51,7 @@
                     <template v-slot:no-data>
                         <v-alert
                         :value="true"
-                        type="error"
+                        type="warning"
                         >
                         Nenhum Matéria Encontrada
                         </v-alert>
@@ -68,7 +68,7 @@
             <AlertDialog
                 message="Tem certeza que Deseja Exluir A Matéria?"
                 subText="Isso irá exluir também todas as Provas e Notas de Alunos Relacionados"
-                @positive="handleDeleteSubject"
+                @positive="deleteSubject"
                 v-model="showDeleteForm" 
             />
 
@@ -77,14 +77,14 @@
     </v-container>
 </template>
 
-<script lang="ts">
+<script>
 export default {
     name: 'SubjectsPage',
-    data(): object{
+    data(){
         return {
             headers:[
                 { text: 'Nome', value: 'name' },
-                { text: 'Numero Provas Criadas', value: 'tests' },                
+                { text: 'Numero Provas Relacionadas', value: 'tests', sortable: false },                
                 { text: 'Options', value: 'name', sortable: false },
             ],
             search: '',
@@ -98,37 +98,47 @@ export default {
         SubjectsForm: require('./../../components/subjects').SubjectsForm
     },
     computed:{
-        allSubjects(): any{
+        // get all subjects in vuex store
+        allSubjects(){
             return this.$store.state.subjects.all;
         },
-    },
-    created(){
-        this.$store.dispatch('subjects/setAll');
+        // get all tests in vuex store
+        tests(){
+            return this.$store.state.tests.all;
+        },
     },
     watch:{
-        showSubjectsForm(value: boolean): void{
+        // Objserve the Value to set the item to be edited
+        showSubjectsForm(value){
             if(!value){
                 this.editedSubject = null;
             }
         }
     },
     methods:{
+        // get number of tests of some subject
         getNumberOfTests(subject){
-            return 0;
+            let count = 0;
+            this.tests.forEach(test => {                
+                if(test.fk_subject == subject.id){
+                    count++;
+                }
+            });
+            return count;
         },
-        // set the edited item an show the form
-        handleEditSubject(subject: object): void{
+        // function to set the item to be edited an show the form
+        handleEditSubject(subject){
             
             this.editedSubject = subject;
             this.showSubjectsForm = true;
         },
-        // prepare subject to be deleted
-        deleteSubject(id: number): void{            
+        // function to set the item to be deleted an show confirm the form
+        handleDeleteSubject(id){            
             this.deleteSubjectId = id;
             this.showDeleteForm = true;
         },
-        // excute the delete acion in store
-        handleDeleteSubject():any{                        
+        // excute the delete vuex action to delete the subject
+        deleteSubject(){                        
             this.$store.dispatch('subjects/delete', this.deleteSubjectId);
         } 
     }

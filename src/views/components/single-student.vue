@@ -1,5 +1,5 @@
 <template>
-    <v-container>
+    <v-container v-if="student !== null">
         <v-layout row wrap>
             
             <v-flex pa-2 sm12 md4>
@@ -61,6 +61,12 @@
                             </td>
                         </template>
 
+                        <template slot="no-data" >
+                            <v-alert :value="true" type="warning">
+                                Nenhuma Prova Encontrada
+                            </v-alert>
+                        </template>
+
                         </v-data-table>
                     
                     <v-card-actions>
@@ -80,7 +86,7 @@
             message="Tem certeza que Deseja Exluir o Teste?"
             @positive="deleteTest"
             v-model="showDeleteForm" 
-        />
+        />      
     </v-container>
 </template>
 
@@ -88,8 +94,7 @@
 export default {
     name: 'SingleStudent',
     data(){
-        return {
-            studentAvaliable: false,
+        return {            
             headers:[
                 { text: 'Prova', value: 'name' },
                 { text: 'Materia', value: 'subject' },
@@ -107,12 +112,14 @@ export default {
         CardScores: require('./../../components/students').CardScores
     },
     created(){        
-
-        if(this.student !== null){
-            this.studentAvaliable = true;
+        // check if the student exist in system
+        if(this.student == null){            
+            alert('Estdante não Encontrado')
+            this.$router.push({name: 'students'})
         }
     },
     watch:{
+        // Observe the v-model of form to reset the values to be edited
         showTestsStudentsForm(value){
             if(!value){
                 this.editedIndex = null;
@@ -121,6 +128,7 @@ export default {
         }
     },
     computed:{
+        // get the students in vuex store using the params in router
         student(){
             let studentID = this.$route.params.id;
             let student = this.$store.getters['students/getById'](studentID);
@@ -128,34 +136,40 @@ export default {
         }
     },
     methods:{
+        // return the test name using the test id
         getTestName(testId){            
             let test = this.$store.getters['tests/getById'](testId);            
             return test.name;
         },
+        // return the subject name using the test id
         getTestSubject(testId){
             let test = this.$store.getters['tests/getById'](testId);
             let subject = this.$store.getters['subjects/getById'](test.fk_subject);            
             return subject.name;
         },
+        // main function to edit some test
         handleEditTest(test){
             this.editedIndex = this.student.tests.indexOf(test);
             this.editedTest = test;            
             this.showTestsStudentsForm = true;
         },
+        // main function to delete some test
         handleDeleteTest(test){
+            // prepare the values to be deleted
             this.editedIndex = this.student.tests.indexOf(test);
             this.showDeleteForm = true;
         },
+        // excute the process to delete the test
         deleteTest(){
-            // remvoe observers
+            // remvoe observers of varible
             let student = JSON.parse(JSON.stringify(this.student));
+            
+            // remove the test using the test id in variable
             student.tests.splice(this.editedIndex);
+            
+            // set the new student value using edit action in vuex
             this.$store.dispatch('students/edit', student);
         }
     }
 }
 </script>
-
-<style>
-
-</style>

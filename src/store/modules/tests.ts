@@ -71,7 +71,7 @@ export default {
             getters.saveDataInLocalStorange();
         },
         // add new test to global var
-        add({ commit, getters }: any, newTest){
+        add({ commit, getters }: any, newTest: any){
             commit('addNew', newTest);
             getters.saveDataInLocalStorange();
         },

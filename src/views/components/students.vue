@@ -1,95 +1,108 @@
 <template>
-    <v-container>
-         <v-toolbar flat color="white">      
-            <v-spacer></v-spacer>
-            <v-dialog v-model="showForm" max-width="500px">
-              <template v-slot:activator="{ on }">
-                <v-btn color="primary" dark class="mb-2" v-on="on">Adicionar Novo</v-btn>
-              </template>
+  <v-container>
+    <v-card>                                  
+        <v-card-title>                                            
+              <v-btn 
+                color="info" 
+                dark class="mb-2" 
+                @click="showForm = true">
+                Adicionar Novo
+              </v-btn>
 
-              <StudentsForm
-                @closeForm="showForm = false;" 
-                :editedItem="editedItem"
-              />
+              <v-spacer></v-spacer>
               
-      </v-dialog>
-     <AlertDialog
-        message="Tem certeza que Deseja Exluir o Estudante?"
-        @positive="handleDeleteStudent"
-        v-model="showDeleteForm" 
-      />     
+              <v-text-field
+                  v-model="search"
+                  append-icon="search"
+                  label="Buscar Aluno"
+                  single-line
+                  hide-details
+              />
+                            
+        </v-card-title>
+        <v-dialog v-model="showForm" max-width="500px">              
 
-    </v-toolbar>
-    <v-data-table
-      :headers="headers"
-      :items="allStudents"
-      class="elevation-1"
-      :rows-per-page-items="[10,15,20,{ text:'Todos', value:-1}]"
-      rows-per-page-text="Quantidade de items a Mostrar"
-    >
-      <template v-slot:items="props">
-        <tr>
+          <StudentsForm
+            @closeForm="showForm = false;" 
+            :editedItem="editedItem"
+          />
+      
+        </v-dialog>
+        <AlertDialog
+            message="Tem certeza que Deseja Exluir o Estudante?"
+            @positive="deleteStudent"
+            v-model="showDeleteForm" 
+          />                 
+        <v-data-table
+          :headers="headers"
+          :items="allStudents"
+          :search="search"      
+          :rows-per-page-items="[10,15,20,{ text:'Todos', value:-1}]"
+          rows-per-page-text="Quantidade de items a Mostrar"
+        >
+          <template v-slot:items="props">
+            <tr>
 
-          <td @click="goToStudentPage(props.item)">{{ props.item.name }}</td>                  
-          
-          <td class="justify-end layout ">
-            <v-icon
-              small            
-              class="mr-2"
-              @click="editStudent(props.item)"
+              <td style="cursor: pointer" @click="goToStudentPage(props.item)">{{ props.item.name }}</td>                  
+              
+              <td row class="justify-end layout ">
+                <v-icon
+                  small            
+                  class="mr-2"
+                  @click="hadleEditStudent(props.item)"
+                >
+                  edit
+                </v-icon>
+                <v-icon
+                  small
+                  @click="handleDeleteStudent(props.item.id)"
+                >
+                  delete
+                </v-icon>
+              </td>      
+            </tr>
+                      
+          </template>
+          <template v-slot:no-data>
+            <v-alert
+              :value="true"
+              type="warning"
             >
-              edit
-            </v-icon>
-            <v-icon
-              small
-              @click="deleteStudent(props.item.id)"
+              Nenhum Estudante Encontrado
+            </v-alert>
+            <v-btn color="primary" >Reset</v-btn>
+          </template>
+        </v-data-table>
+        
+        <v-snackbar
+              v-model="notification.show"                  
+              top
+              right
+              :color="notification.color"
+              vertical="vertical"
             >
-              delete
-            </v-icon>
-          </td>      
-        </tr>
-                  
-      </template>
-      <template v-slot:no-data>
-        <v-alert
-          :value="true"
-          type="error"
-        >
-          Nenhum Estudante Encontrado
-        </v-alert>
-        <v-btn color="primary" >Reset</v-btn>
-      </template>
-    </v-data-table>
-    
-    <v-snackbar
-          v-model="notification.show"                  
-          top
-          right
-          :color="notification.color"
-          vertical="vertical"
-        >
           {{ notification.text }}
           <v-btn            
             flat
             @click="notification.show = false"
           >
-            Close
+            Fechar
           </v-btn>
-        </v-snackbar>
-    
-
+        </v-snackbar>    
+    </v-card>
   </v-container>
 </template>
 
-<script lang="ts">
+<script>
 export default {
     name:'StudentsPage',
-    data(): object {
+    data() {
         return {
             headers: [            
                 { text: 'Nome', value: 'name' },                      
-                { text: 'Opções', value: 'name', align: 'right', sortable: false },      
+                { text: 'Opções', value: 'name', align: 'right', width: '30', sortable: false },      
             ],
+            search: '',
             notification:{
               show: false,
               color: 'error',
@@ -101,12 +114,9 @@ export default {
             deleteStudentId: null
         }
     },
-    created(){
-      this.$store.dispatch('students/setAll');      
-    },
     watch:{
-      // when dialog close go back the variables to default
-      showForm(newValue: boolean): void{
+      // Objserve the Value to set the item to be edited
+      showForm(newValue){
         if(!newValue){
           this.editedItem = null;
         }
@@ -116,34 +126,38 @@ export default {
       StudentsForm: require('./../../components/students').FormStudents
     },
     computed:{
-        // return the array of objects in store
-        allStudents(): any {
+        // get all students in vuex store
+        allStudents(){
             return this.$store.state.students.all;
         }
     },
     methods:{
-      // send to single page students
-      goToStudentPage(student: any){
+      // function to go to route single page students
+      goToStudentPage(student){
         let params = {
           id: student.id,
           name: student.name
         };
         this.$router.push({name: 'single_students', params})
       },
-      // set the student edited variable and show the form to edit it
-      editStudent(student: any): void{
+      
+      // function to set the student to be edited and show the form
+      hadleEditStudent(student){
         this.editedItem = student;
         this.showForm = true;
       },
       
-      // show the form and set the id to delete the student
-      deleteStudent(id: number): void{
+      // function set the student id to be delete and show the form
+      handleDeleteStudent(id){
         this.showDeleteForm = true;
         this.deleteStudentId = id;
       },
-      // dispatch the envent to delete the student
-      handleDeleteStudent(): void{
+      // excute the process to delete the student
+      deleteStudent(){
+        // dispatch the envent to delete the student
         this.$store.dispatch('students/delete', this.deleteStudentId);
+        
+        // close form and send the notifications
         this.showDeleteForm = false;
         this.notification = {           
             show: true,

@@ -8,9 +8,9 @@
             {{ message }}
             
           </v-card-title>
-          <v-card-text v-if="subText !== null">
-            {{ subText }}
-          </v-card-text>
+            <v-card-text v-if="subText !== null">
+              {{ subText }}
+            </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn color="error" @click="positive">Deletar</v-btn>
@@ -21,7 +21,7 @@
       </v-dialog>
 </template>
 
-<script lang="ts">
+<script>
 export default {
     data(){
         return {
@@ -29,7 +29,7 @@ export default {
         }
     },
     props:{
-        // link with v-model
+        // link with v-model value
         value:{
             type: Boolean,
             required: true
@@ -46,18 +46,20 @@ export default {
     },
     computed:{
       dialog:{
-        get(): boolean{
+        get(){
           return this.value;
         },
-        set(value): void{
+        set(value){
           this.$emit('input', value);
         }
       }
     },
     methods:{
+      // emit a enevt to close the form
       closeDialog(){
         this.$emit('input' , false)
       },
+      // emit a positive answer and close the form
       positive(){
         this.$emit('positive');
         this.closeDialog();    

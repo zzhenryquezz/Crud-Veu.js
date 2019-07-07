@@ -3,13 +3,8 @@
         ref="form"
         v-model="validData" 
         @submit.prevent="handleSubmitForm">
-        <v-card>
-            <v-card-title v-if="!canCreateTest">
-                <v-alert :value="true" type="error">
-                    Sem nenhuma Matéria por favor cria uma Matéria para poder criar Provas
-                </v-alert>
-            </v-card-title>
-            <v-card-title v-else>
+        <v-card v-if="canCreateTest">            
+            <v-card-title>
                 <v-layout row wrap>
                     <v-flex xs12>
                         <v-text-field 
@@ -42,7 +37,21 @@
                     color="error">Cancelar</v-btn>
                 <v-btn                     
                     type="submit" 
-                    color="success">Criar Prova</v-btn>
+                    color="success">{{btn_test}}</v-btn>
+            </v-card-actions>
+        </v-card>
+        <v-card v-else>
+            <v-card-title >
+                <v-alert :value="true" type="error">
+                    Sem nenhuma Matéria por favor cria uma Matéria para poder criar Provas
+                </v-alert>
+            </v-card-title>
+            <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn @click="$emit('close')" color="info">
+                    Ok
+                </v-btn>
+                <v-spacer></v-spacer>
             </v-card-actions>
         </v-card>
     </v-form>
@@ -79,19 +88,28 @@ export default {
                 this.name = '';
                 this.description = '';
                 this.fk_subject = '';
+                this.$refs.form.reset();
             }
         }
     },
-    created(){
-        this.$store.dispatch('subjects/setAll');
+    created(){        
         if(this.subjects_list.length > 0){
             this.canCreateTest = true;
         }
     },
     computed:{
+        // get all subjects in vuex store
         subjects_list(){
             return this.$store.state.subjects.all;
+        },
+        btn_test(){
+            if(this.editedTest == null){
+                return 'Criar Teste'
+            }else{
+                return 'Salvar';
+            }
         }
+
     },
     methods:{
         validate () {
@@ -119,8 +137,7 @@ export default {
                 description: this.description,
                 fk_subject: this.fk_subject
             }
-            this.$store.dispatch('tests/add', test);
-            console.log('create')
+            this.$store.dispatch('tests/add', test);            
         },
         editTest(){
             let test = {

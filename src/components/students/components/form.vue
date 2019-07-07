@@ -3,30 +3,23 @@
         ref="form" 
         v-model="valid"
         @submit.prevent="hadleSubmitForm">                        
-        <v-card>
-        <v-card-title>
-            <span class="headline">Form</span>
-        </v-card-title>
+        <v-card>        
 
         <v-card-text>
-            <v-container grid-list-md>
-            <v-layout wrap>
-                <v-flex xs12>
-                    <v-text-field 
-                    v-model="name" 
-                    label="Nome do Aluno"
-                    required
-                    :rules="[ v => !! v || 'Nome é Obrigatorio']">
-                    </v-text-field>
-                </v-flex>
-            </v-layout>
-            </v-container>
+          
+            <v-text-field 
+                v-model="name" 
+                label="Nome do Aluno"
+                required
+                :rules="[ v => !! v || 'Nome é Obrigatorio']">
+            </v-text-field>
+        
         </v-card-text>
 
         <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="blue darken-1" flat @click="$emit('closeForm')" >Cancel</v-btn>
-            <v-btn color="blue darken-1" :disabled="!valid || name == ''" type="submit" flat >Save</v-btn>
+            <v-btn color="error" @click="$emit('closeForm')" >Cancelar</v-btn>
+            <v-btn color="success" type="submit" >Save</v-btn>
         </v-card-actions>
         </v-card>
     </v-form>
@@ -41,6 +34,7 @@ export default {
         }
     },
     watch:{
+        // Objserve the Value to know if is a some item be edited or a is add new form
         editedItem(value){
             this.$refs.form.reset();
             if(value !== null){
@@ -58,35 +52,46 @@ export default {
         }
     },
     methods:{
+        // check if form is valid
+        validate(){
+            if (this.$refs.form.validate()) {
+                this.snackbar = true;
+                return true;                
+            }
+            return false
+        },
+        // main function to submit the form
         hadleSubmitForm(){
-            if(!this.valid){
+            if(!this.validate()){
                 return;
             }
+            // check if have to add new item or edit some item
             if(this.editedItem !== null){
                 this.updateStudent();
             }else{
                 this.addNewStudent();
             }
-        },
-        updateStudent(){            
-            let args = {
-                id: this.editedItem.id,
-                name: this.name
-            };
 
-            this.$store.dispatch('students/edit', args);
-            this.$refs.form.reset();            
+            // close the form and reset the values
+            this.name = '';
+            this.$refs.form.reset();
             this.$emit('closeForm');
         },
+        // function to edit some the item
+        updateStudent(){
+            let args = this.editedItem;
+            args['name'] = this.name;            
+
+            this.$store.dispatch('students/edit', args);
+        },
+        // function to add a new item
         addNewStudent(){
         
             let student = {          
                 name: this.name
             };
 
-            this.$store.dispatch('students/addNew', student);
-            this.$refs.form.reset();
-            this.$emit('closeForm');
+            this.$store.dispatch('students/addNew', student);          
         },        
     }
 }

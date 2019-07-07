@@ -18,7 +18,7 @@
             }
             state.all = newData;
         },        
-        addNewStudent(state: any, newStudent: any){
+        addNewStudent(state: any, newStudent: any){            
             state.all.push(newStudent);
         },
         editStudent(state: any, studentData: any){
@@ -93,7 +93,10 @@
         },
         // detete all student tests with test id
         deteteTests({commit, dispatch}:any, args: any){
-            let newStudent = args.student;
+            let newStudent = args.student;            
+            if(newStudent == undefined){
+                return;
+            }
             newStudent['tests'] = newStudent['tests'].filter((test: any) => {                
                 if(test.fk_test !== args.testId){
                     return test;

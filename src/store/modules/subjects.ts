@@ -70,7 +70,7 @@ export default {
             getters.saveDataInLocalStorange();
         },
         // add new subject to global var
-        add({ commit, getters }: any, newSubject){
+        add({ commit, getters }: any, newSubject: any){
             commit('addNew', newSubject);
             getters.saveDataInLocalStorange();
         },

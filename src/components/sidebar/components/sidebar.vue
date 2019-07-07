@@ -23,39 +23,16 @@
 
         <v-divider/>
 
-        <v-list-tile to="/">
+        <v-list-tile
+          active-class="blue" 
+          v-for="(link, index) in links" 
+          :key="index" 
+          :to="link.to">
           <v-list-tile-action>
-            <v-icon>home</v-icon>
+            <v-icon>{{ link.icon }}</v-icon>
           </v-list-tile-action>
           <v-list-tile-content>
-            <v-list-tile-title>Home</v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
-
-        <v-list-tile to="/students">
-          <v-list-tile-action>
-            <v-icon>groups</v-icon>
-          </v-list-tile-action>
-          <v-list-tile-content>
-            <v-list-tile-title>Alunos</v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>        
-       
-        <v-list-tile to="/subjects">
-          <v-list-tile-action>
-            <v-icon>account_balance</v-icon>
-          </v-list-tile-action>
-          <v-list-tile-content>
-            <v-list-tile-title>Materias</v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>        
-        
-        <v-list-tile to="/tests">
-          <v-list-tile-action>
-            <v-icon>assignment</v-icon>
-          </v-list-tile-action>
-          <v-list-tile-content>
-            <v-list-tile-title>Provas</v-list-tile-title>
+            <v-list-tile-title>{{ link.text }}</v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>        
 
@@ -63,19 +40,43 @@
     </v-navigation-drawer>
 </template>
 
-<script lang="ts">
+<script>
 export default {
-    data(): object{
+    data(){
       return {
-        logo_src: require('./../../../assets/logo.png')
+        logo_src: require('./../../../assets/logo.png'),
+        links:[
+          {
+            icon: 'home',
+            text: 'Inicio',
+            to: '/'
+          },
+          {
+            icon: 'groups',
+            text: 'Alunos',
+            to: '/students'
+          },
+          {
+            icon: 'account_balance',
+            text: 'Materias',
+            to: '/subjects'
+          },
+          {
+            icon: 'assignment',
+            text: 'Provas',
+            to: '/tests'
+          },
+        ]
       }
     },
     computed:{
       toggleSidebar:{
-        get(): boolean{
+        get(){
+          // get the sidebar value in vuex store
           return this.$store.state.toggleSidebar;
         },
-        set: function(){
+        set(){
+          // call vuex mutation to toggle the sidebar
           this.$store.commit('toggleSidebar');
         }
       }
